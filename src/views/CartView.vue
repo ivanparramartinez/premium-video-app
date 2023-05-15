@@ -34,6 +34,9 @@ onBeforeMount(() => {
     <button class="clear-button" @click="clearCart()">Vaciar carrito de compra</button>
     <button class="confirm-button" @click="confirmTransaction()">Finalizar compra</button>
   </div>
+  <div v-if="cart.length === 0">
+    <h1>No hay películas en el carrito</h1>
+  </div>
   <div class="grid-container-cart">
     <comp-movie-card
       v-for="(movie, idx) in cart"
@@ -80,5 +83,8 @@ onBeforeMount(() => {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+h1 {
+  text-align: center;
 }
 </style>

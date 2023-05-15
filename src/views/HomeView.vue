@@ -8,14 +8,27 @@ const uri = 'http://www.omdbapi.com/?apikey=5eec5adc&'
 const search = ref('')
 const movies = ref([])
 const cart = ref([])
+let timeoutId = null
 
 const getMovies = async () => {
-  const res = await axios.get(`${uri}s=${search.value}`)
-  if (res.data.Search) {
-    movies.value = res.data.Search
-  } else {
-    movies.value = []
-  }
+  await axios.get(`${uri}s=${search.value}`).then((res) => {
+    if (res.data.Search) {
+      movies.value = res.data.Search
+    } else {
+      alert('Error al obtener el listado. Intente nuevamente')
+      search.value = ''
+      movies.value = []
+    }
+  })
+}
+
+function handleInput() {
+  clearTimeout(timeoutId)
+  timeoutId = setTimeout(() => {
+    if (search.value.length > 3) {
+      getMovies()
+    }
+  }, 1500)
 }
 
 const addToCart = (movie, mode, date, quantity) => {
@@ -42,13 +55,6 @@ onBeforeMount(() => {
 
   cart.value = JSON.parse(localStorage.getItem('cart'))
 })
-
-// watch([() => search.value, () => movies.value], ([newVal1, newVal2]) => {
-//   if (newVal1.length > 3 && toRaw(newVal2).length === 0) {
-//     alert('No se encontraron resultados')
-//     search.value = ''
-//   }
-// })
 </script>
 
 <template>
@@ -56,7 +62,7 @@ onBeforeMount(() => {
     <input
       v-model="search"
       type="text"
-      @input="getMovies"
+      @input="handleInput"
       @keyup.esc="search = ''"
       placeholder="Buscar película..."
     />
