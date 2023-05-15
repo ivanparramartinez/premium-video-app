@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import axios from 'axios'
 import CompMovieCard from '@/components/CompMovieCard.vue'
 
@@ -45,6 +45,12 @@ const addToCart = (movie, mode, date, quantity) => {
     alert('Película agregada al carrito')
   }
 }
+
+watch(search, () => {
+  if (search.value === '') {
+    movies.value = []
+  }
+})
 
 onBeforeMount(() => {
   let localCart = JSON.parse(localStorage.getItem('cart'))
