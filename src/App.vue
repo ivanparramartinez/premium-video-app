@@ -1,5 +1,5 @@
 <script setup>
-import {RouterLink, RouterView} from 'vue-router';
+import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
@@ -12,8 +12,7 @@ import {RouterLink, RouterView} from 'vue-router';
       </nav>
     </div>
   </header>
-
-  <RouterView/>
+  <RouterView />
 </template>
 
 <style scoped>
@@ -23,14 +22,14 @@ header {
 }
 
 h1 {
-  font-size: clamp(2rem, 4vw + 1rem, 6rem);
+  font-size: clamp(2rem, 4vw + 1rem, 4rem);
   text-align: center;
   font-weight: 900;
   font-family: 'Raleway', sans-serif;
-  background: -webkit-linear-gradient(right, #00c4ff, #ff0091);
-  background: -o-linear-gradient(right, #00c4ff, #ff0091);
-  background: -moz-linear-gradient(right, #00c4ff, #ff0091);
-  background: linear-gradient(to right, #00c4ff, #ff0091);
+  background: -webkit-linear-gradient(right, #fd0000, yellow);
+  background: -o-linear-gradient(right, #fd0000, yellow);
+  background: -moz-linear-gradient(right, #fd4c00, yellow);
+  background: linear-gradient(to right, #fd0000, yellow);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -44,7 +43,6 @@ nav {
 
 .wrapper {
   max-width: 100%;
-  margin: 0 auto;
-  padding: 0 2rem;
+  margin: 1rem;
 }
 </style>

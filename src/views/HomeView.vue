@@ -1,35 +1,31 @@
 <script setup>
-import { onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref, watch, toRaw } from 'vue'
 import axios from 'axios'
+import CompMovieCard from '@/components/CompMovieCard.vue'
 
 const uri = 'http://www.omdbapi.com/?apikey=5eec5adc&'
 
 const search = ref('')
 const movies = ref([])
-const movie = ref({})
 const cart = ref([])
 
 const getMovies = async () => {
   const res = await axios.get(`${uri}s=${search.value}`)
-  movies.value = res.data.Search
-}
-
-const getMovie = async (id) => {
-  const res = await axios.get(`${uri}i=${id}`)
-  movie.value = res.data
+  if (res.data.Search) {
+    movies.value = res.data.Search
+  } else {
+    movies.value = []
+  }
 }
 
 const addToCart = (movie) => {
-  cart.value.push(movie)
-  localStorage.setItem('cart', JSON.stringify(cart.value))
-}
-
-const removeFromCart = (movie) => {
-  cart.value = cart.value.filter((item) => item.imdbID !== movie.imdbID)
-}
-
-const clearCart = () => {
-  cart.value = []
+  let found = cart.value.find((m) => m.imdbID === movie.imdbID)
+  if (found) {
+    alert('Ya agregaste esta película al carrito')
+  } else {
+    cart.value.push(movie)
+    localStorage.setItem('cart', JSON.stringify(cart.value))
+  }
 }
 
 onBeforeMount(() => {
@@ -41,45 +37,55 @@ onBeforeMount(() => {
 
   cart.value = JSON.parse(localStorage.getItem('cart'))
 })
+
+watch([() => search.value, () => movies.value], ([newVal1, newVal2]) => {
+  if (newVal1.length > 3 && toRaw(newVal2).length === 0) {
+    alert('No se encontraron resultados')
+    search.value = ''
+  }
+})
 </script>
 
 <template>
   <main>
-    <input v-model="search" type="text" @input="getMovies" />
+    <input v-model="search" type="text" @input="getMovies" placeholder="Buscar película..." />
     <div class="grid-container">
-      <div class="grid-card" v-for="(movie, idx) in movies" :key="idx">
-          <img :src="movie.Poster" alt="movie.Title" />
-          <h3>{{ movie.Title }}</h3>
-          <button @click="addToCart(movie)">Add to Cart</button>
-      </div>
+      <comp-movie-card
+        v-for="(movie, idx) in movies"
+        :key="idx"
+        :movie="movie"
+        allow-add-to-cart
+        @addToCart="addToCart"
+      />
     </div>
   </main>
-  <!--  <main>
-    <input v-model="search" type="text" @input="getMovies" />
-    <div class="grid-container">
-      <div v-for="(movie, idx) in movies" :key="idx">
-        <div>
-          <img :src="movie.Poster" alt="movie.Title" />
-          <h3>{{ movie.Title }}</h3>
-          <button @click="addToCart(movie)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-  </main>-->
 </template>
 
 <style scoped>
 main {
-  border: 1px solid blue;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1.5rem;
 }
 
-img {
+.grid-container {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+  grid-auto-rows: 1fr;
+  gap: 1rem;
+}
+
+input {
+  padding: 1rem;
+  outline: none;
+  font-family: 'Raleway', sans-serif;
+  border: solid 0.2rem transparent;
+  border-radius: 1.5rem;
+  background-image: linear-gradient(white, white), linear-gradient(to right, #fd4c00, yellow);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
 }
 </style>
