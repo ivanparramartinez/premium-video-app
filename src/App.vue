@@ -21,15 +21,29 @@ header {
   max-height: 100vh;
 }
 
+a {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+}
+
+a:hover {
+  color: #fd4c00;
+}
+
+.router-link-active {
+  color: #fd4c00;
+}
+
 h1 {
   font-size: clamp(2rem, 4vw + 1rem, 4rem);
   text-align: center;
   font-weight: 900;
   font-family: 'Raleway', sans-serif;
-  background: -webkit-linear-gradient(right, #fd0000, yellow);
-  background: -o-linear-gradient(right, #fd0000, yellow);
+  background: -webkit-linear-gradient(right, #fd4c00, yellow);
+  background: -o-linear-gradient(right, #fd4c00, yellow);
   background: -moz-linear-gradient(right, #fd4c00, yellow);
-  background: linear-gradient(to right, #fd0000, yellow);
+  background: linear-gradient(to right, #fd4c00, yellow);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -38,7 +52,7 @@ nav {
   display: flex;
   justify-content: center;
   gap: 2rem;
-  margin-top: 2rem;
+  margin: 2rem 0;
 }
 
 .wrapper {

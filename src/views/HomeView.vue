@@ -102,6 +102,7 @@ main {
 }
 
 input {
+  width: 40%;
   padding: 1rem;
   outline: none;
   font-family: 'Raleway', sans-serif;
@@ -110,5 +111,11 @@ input {
   background-image: linear-gradient(white, white), linear-gradient(to right, #fd4c00, yellow);
   background-origin: border-box;
   background-clip: padding-box, border-box;
+}
+
+@media (max-width: 768px) {
+  input {
+    width: 80%;
+  }
 }
 </style>
