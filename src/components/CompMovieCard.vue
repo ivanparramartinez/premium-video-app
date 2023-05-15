@@ -57,7 +57,8 @@ function removeFromCart(movie) {
 <template>
   <div class="grid-card-container">
     <div class="grid-card-left">
-      <img :alt="movie.Title" :src="movie.Poster" v-if="movie.Poster" />
+      <img :alt="movie.Title" :src="movie.Poster" v-if="movie.Poster !== 'N/A'" />
+      <img src="@/assets/no-image.jpg" alt="" v-else />
     </div>
     <div class="grid-card-right">
       <div class="movie-description">
