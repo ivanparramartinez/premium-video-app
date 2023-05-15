@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, ref, watch, toRaw } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import axios from 'axios'
 import CompMovieCard from '@/components/CompMovieCard.vue'
 
@@ -18,13 +18,18 @@ const getMovies = async () => {
   }
 }
 
-const addToCart = (movie) => {
+const addToCart = (movie, mode, date, quantity) => {
+  console.log(mode, date, quantity)
   let found = cart.value.find((m) => m.imdbID === movie.imdbID)
   if (found) {
     alert('Ya agregaste esta película al carrito')
   } else {
+    movie.mode = mode
+    movie.date = date
+    movie.quantity = quantity
     cart.value.push(movie)
     localStorage.setItem('cart', JSON.stringify(cart.value))
+    alert('Película agregada al carrito')
   }
 }
 
@@ -38,17 +43,23 @@ onBeforeMount(() => {
   cart.value = JSON.parse(localStorage.getItem('cart'))
 })
 
-watch([() => search.value, () => movies.value], ([newVal1, newVal2]) => {
-  if (newVal1.length > 3 && toRaw(newVal2).length === 0) {
-    alert('No se encontraron resultados')
-    search.value = ''
-  }
-})
+// watch([() => search.value, () => movies.value], ([newVal1, newVal2]) => {
+//   if (newVal1.length > 3 && toRaw(newVal2).length === 0) {
+//     alert('No se encontraron resultados')
+//     search.value = ''
+//   }
+// })
 </script>
 
 <template>
   <main>
-    <input v-model="search" type="text" @input="getMovies" placeholder="Buscar película..." />
+    <input
+      v-model="search"
+      type="text"
+      @input="getMovies"
+      @keyup.esc="search = ''"
+      placeholder="Buscar película..."
+    />
     <div class="grid-container">
       <comp-movie-card
         v-for="(movie, idx) in movies"

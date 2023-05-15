@@ -14,6 +14,11 @@ const clearCart = () => {
   localStorage.setItem('cart', JSON.stringify(cart.value))
 }
 
+function confirmTransaction() {
+  alert('Tu compra ha finalizado con éxito')
+  clearCart()
+}
+
 onBeforeMount(() => {
   let localCart = JSON.parse(localStorage.getItem('cart'))
 
@@ -27,6 +32,7 @@ onBeforeMount(() => {
 <template>
   <div class="clearCartButton" v-if="cart.length > 0">
     <button class="clear-button" @click="clearCart()">Vaciar carrito de compra</button>
+    <button class="confirm-button" @click="confirmTransaction()">Finalizar compra</button>
   </div>
   <div class="grid-container-cart">
     <comp-movie-card
@@ -34,6 +40,7 @@ onBeforeMount(() => {
       :key="idx"
       :movie="movie"
       allow-remove-from-cart
+      mode-cart
       @removeFromCart="removeFromCart"
     />
   </div>
@@ -53,11 +60,21 @@ onBeforeMount(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
   margin: 1rem;
 }
 
 .clear-button {
   background-color: #f44336;
+  color: white;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.confirm-button {
+  background-color: #4caf50;
   color: white;
   padding: 0.5rem;
   border: none;

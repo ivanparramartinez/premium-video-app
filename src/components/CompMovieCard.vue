@@ -1,5 +1,5 @@
 <script setup>
-import { toRaw } from 'vue'
+import { ref, toRaw } from 'vue'
 
 defineProps({
   movie: {
@@ -13,13 +13,40 @@ defineProps({
   allowRemoveFromCart: {
     type: Boolean,
     default: false
+  },
+  modeCart: {
+    type: Boolean,
+    default: false
   }
 })
 
+const transactionMode = ref(null)
+const date = ref(null)
+const quantity = ref(null)
+const added = ref(false)
+
 const emit = defineEmits(['addToCart', 'removeFromCart'])
 
-function addToCart(movie) {
-  emit('addToCart', toRaw(movie))
+function changeMode(mode) {
+  if (mode === 'rent') {
+    transactionMode.value = 'rent'
+  } else if (mode === 'buy') {
+    transactionMode.value = 'buy'
+  } else {
+    transactionMode.value = null
+  }
+}
+
+function addToCart(movie, mode, date, quantity) {
+  if (
+    (mode === 'rent' && (date == null || quantity == null || quantity < 1)) ||
+    (mode === 'buy' && (quantity < 1 || !quantity))
+  ) {
+    alert(mode === 'rent' ? 'Por favor introduce fecha y cantidad' : 'Por favor introduce cantidad')
+    return
+  }
+  emit('addToCart', toRaw(movie), mode, date, quantity)
+  added.value = true
 }
 
 function removeFromCart(movie) {
@@ -40,9 +67,30 @@ function removeFromCart(movie) {
       <div :class="movie.Type === 'movie' ? 'bubble-movie' : 'bubble-series'">
         <p class="type">{{ movie.Type }}</p>
       </div>
-      <div class="movie-buttons">
-        <button class="rent-button" v-if="allowAddToCart" @click="addToCart(movie)">Rentar</button>
-        <button class="buy-button" v-if="allowAddToCart" @click="addToCart(movie)">Comprar</button>
+      <div class="movie-transaction-details" v-if="modeCart">
+        <p><strong>Transacción: </strong>{{ movie.mode === 'rent' ? 'Renta' : 'Compra' }}</p>
+        <p v-if="movie.mode === 'rent'"><strong>Fecha: </strong>{{ movie.date }}</p>
+        <p><strong>Cantidad: </strong>{{ movie.quantity }}</p>
+      </div>
+      <div class="mode-rent" v-if="transactionMode != null && !added">
+        <input type="date" v-model="date" v-if="transactionMode === 'rent'" />
+        <input type="number" placeholder="Cantidad..." v-model="quantity" />
+        <div class="movie-buttons">
+          <button
+            :class="transactionMode === 'rent' ? 'rent-button' : 'buy-button'"
+            v-if="allowAddToCart"
+            @click="addToCart(movie, transactionMode, date, quantity)"
+          >
+            {{ transactionMode === 'rent' ? 'Rentar' : 'Comprar' }}
+          </button>
+          <button class="cancel-button" @click="changeMode(null)">Cancelar</button>
+        </div>
+      </div>
+      <div class="movie-buttons" v-else>
+        <button class="rent-button" v-if="allowAddToCart" @click="changeMode('rent')">
+          Rentar
+        </button>
+        <button class="buy-button" v-if="allowAddToCart" @click="changeMode('buy')">Comprar</button>
         <button class="remove-button" v-if="allowRemoveFromCart" @click="removeFromCart(movie)">
           Remove from Cart
         </button>
@@ -54,7 +102,7 @@ function removeFromCart(movie) {
 <style scoped>
 .grid-card-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 40% 60%;
   grid-template-rows: 1fr;
   width: auto;
   height: auto;
@@ -97,6 +145,19 @@ function removeFromCart(movie) {
   font-size: 0.8rem;
 }
 
+.movie-transaction-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.movie-transaction-details p {
+  font-weight: 300;
+  font-size: 0.8rem;
+}
+
 .movie-buttons {
   display: flex;
   justify-content: space-between;
@@ -116,6 +177,15 @@ function removeFromCart(movie) {
 
 .buy-button {
   background-color: #2196f3;
+  color: white;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: #000000;
   color: white;
   padding: 0.5rem;
   border: none;
@@ -155,5 +225,20 @@ button:hover {
   font-weight: bold;
   padding: 0.5rem;
   width: fit-content;
+}
+
+.mode-rent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+input {
+  border-radius: 5px;
+  border: none;
+  width: 100%;
+  font-size: 0.8rem;
+  outline: none;
 }
 </style>
