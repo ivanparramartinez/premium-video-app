@@ -3,7 +3,7 @@ import { onBeforeMount, ref, watch } from 'vue'
 import axios from 'axios'
 import CompMovieCard from '@/components/CompMovieCard.vue'
 
-const uri = 'http://www.omdbapi.com/?apikey=5eec5adc&'
+const uri = `http://www.omdbapi.com/?apikey=${import.meta.env.VITE_OMDB_API_KEY}&`
 
 const search = ref('')
 const movies = ref([])
